@@ -1,3 +1,4 @@
+import math
 from typing import List
 
 
@@ -5,7 +6,8 @@ def show_menu():
     print('1.Citire date.')
     print('2.Determinare cea mai lunga secventa cu proprietatea ca toate numerele sunt pare.')
     print('3.Determinare cea mai lunga secventa cu proprietatea ca toate numerele sunt formate din cifre prime.')
-    print('4.Iesire')
+    print('4.Determinare cea mai lunga secventa cu proprietatea ca toate numerele sunt patrate perfecte.')
+    print('5.Iesire')
 
 
 def read_list() -> List[int]:
@@ -47,7 +49,7 @@ def get_is_prime(n):
     :return: true daca numarul este prim, false daca numarul nu este prim
     """
     nr = 0
-    for div in range(2, n//2):
+    for div in range(2, n // 2):
         if n % div == 0:
             nr = nr + 1
     if nr == 0:
@@ -95,6 +97,39 @@ def get_longest_prime_digits(lst: List[int]) -> List[int]:
     return result
 
 
+def get_is_perfect_squares(n):
+    """
+    Determina daca un numar este patrat perfect.
+    :param n: numarul care va fi verificat
+    :return: true daca numarul este patrat perfect, false altfel
+    """
+    if int(math.sqrt(n)) == math.sqrt(n):
+        return True
+    else:
+        return False
+
+
+def get_longest_all_perfect_squares(lst: List[int]) -> List[int]:
+    """
+    Determina cea mai lunga subsecventa care contine toate numerele patrate perfecte.
+    :param lst: lista in care se cauta subsecventa
+    :return: subsecventa gasita
+    """
+    n = len(lst)
+    result = []
+    for st in range(n):
+        for dr in range(st, n):
+            all_perfect_squares = True
+            for num in lst[st:dr + 1]:
+                if not get_is_perfect_squares(num):
+                    all_perfect_squares = False
+                    break
+            if all_perfect_squares:
+                if dr - st + 1 > len(result):
+                    result = lst[st:dr + 1]
+    return result
+
+
 def test_get_longest_all_even():
     assert get_longest_all_even([1, 2, 4, 6, 5, 6, 4, 7, 9]) == [2, 4, 6]
     assert get_longest_all_even([1, 3, 5, 8, 10, 11, 13]) == [8, 10]
@@ -125,6 +160,21 @@ def test_get_longest_prime_digits():
     assert get_longest_prime_digits([17, 66, 37, 71, 83, 80]) == [37, 71]
 
 
+def test_get_is_perfect_squares():
+    assert get_is_perfect_squares(6) == False
+    assert get_is_perfect_squares(4) == True
+    assert get_is_perfect_squares(49) == True
+    assert get_is_perfect_squares(13) == False
+    assert get_is_perfect_squares(25) == True
+
+
+def test_get_longest_all_perfect_squares():
+    assert get_longest_all_perfect_squares([11, 36, 25, 14]) == [36, 25]
+    assert get_longest_all_perfect_squares([32, 144, 23, 67]) == [144]
+    assert get_longest_all_perfect_squares([9, 5, 25, 64, 97]) == [25, 64]
+    assert get_longest_all_perfect_squares([13, 15, 28]) == []
+
+
 def main():
     lst = []
     while True:
@@ -138,6 +188,9 @@ def main():
             print('Cea mai lunga subsecventa cu toate numerele formate din cifre prime este:',
                   get_longest_prime_digits(lst))
         elif optiune == '4':
+            print('Cea mai lunga subsecventa formata din numere patrate perfecte este:',
+                  get_longest_all_perfect_squares(lst))
+        elif optiune == '5':
             break
 
 
@@ -146,4 +199,6 @@ if __name__ == '__main__':
     test_get_is_prime()
     test_get_all_prime_digits()
     test_get_longest_prime_digits()
+    test_get_is_perfect_squares()
+    test_get_longest_all_perfect_squares()
     main()
